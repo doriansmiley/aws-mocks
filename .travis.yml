@@ -1,0 +1,16 @@
+# safelist
+branches:
+  only:
+  - master
+  - dev
+language: node_js
+node_js:
+  - "12"
+env:
+  - LOCAL_TESTING=1 HOSTED_ZONE_ID=XXXXXXXXXXXXXX DOMAIN=lotusjs.org RECORD_TYPE=A AWS_REGION=us-west-2
+jobs:
+  fast_finish: true
+install:
+  - npm install
+script:
+  - npm test

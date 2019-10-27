@@ -9,13 +9,19 @@ describe('Testing Handler', function() {
             endpoint: process.env.ROUTE53_ENDPOINT,
             region: process.env.AWS_REGION
         });
-        const result = await  route53.testDNSAnswer({
-            HostedZoneId: process.env.HOSTED_ZONE_ID,
-            RecordName: process.env.DOMAIN,
-            RecordType: process.env.RECORD_TYPE,
-        }).promise();
+        let params;
+        if( process.env.LOCAL_TESTING ) {
+            params = {
+                HostedZoneId: process.env.HOSTED_ZONE_ID,
+                RecordName: process.env.DOMAIN,
+                RecordType: process.env.RECORD_TYPE,
+            }
+        }
+        const result = await  route53.testDNSAnswer(params).promise();
         debug(result);
-        expect(JSON.stringify(result)).to.deep.equal('{"Nameserver":"ns-1715.awsdns-22.co.uk","RecordName":"lotusjs.org","RecordType":"A","RecordData":["99.86.230.90","99.86.230.71","99.86.230.112","99.86.230.95"],"ResponseCode":"NOERROR","Protocol":"UDP"}');
+        expect(result.RecordName).to.equal(process.env.DOMAIN);
+        expect(result.RecordType).to.equal(process.env.RECORD_TYPE);
+        expect(result.ResponseCode).to.equal('NOERROR');
     });
 
     it(`should fail to find a valid record for: anything ${process.env.DOMAIN} ${process.env.RECORD_TYPE}`, async ()=>{
