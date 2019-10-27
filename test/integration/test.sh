@@ -1,22 +1,26 @@
 #!/bin/bash
-export LOCAL_TESTING=1
 
-[[ -z $ROUTE53_HOST ]] && export ROUTE53_HOST='localhost'
-[[ -z $ROUTE53_PORT ]] && export ROUTE53_PORT=3000
+# default to testing locally, have you build system control this value
+[[ -z $LOCAL_TESTING ]] && export LOCAL_TESTING=1
 [[ -z $DEBUG ]] && export DEBUG=aws-mocks
-[[ -z $ROUTE53_ENDPOINT ]] && export ROUTE53_ENDPOINT="http://$ROUTE53_HOST:$ROUTE53_PORT"
 
-# Determine if testing locally
-# if [ -z string ] True if the string is null (an empty string)
-if [ -z $(echo "${ROUTE53_HOST}" | sed -n 's/^\(localhost\)/\1/p') ]; then
-    LOCAL_TESTING=0
-fi
-
-printf "\nRunning integration tests on $ROUTE53_HOST\n"
+printf "\nRunning integration tests on $LOCAL_TESTING\n"
 
 if [ "$LOCAL_TESTING" = "1" ]; then
 
     printf "\nDoing local integration testing\n"
+
+    # Set values for local testing
+    [[ -z $ROUTE53_HOST ]] && export ROUTE53_HOST='localhost'
+    # when these values are undefined AWS will connect to the services based on your profile
+    [[ -z $ROUTE53_PORT ]] && export ROUTE53_PORT=3000
+    [[ -z $ROUTE53_ENDPOINT ]] && export ROUTE53_ENDPOINT="http://$ROUTE53_HOST:$ROUTE53_PORT"
+    # Note these values are usually grabbed from a CF stack when running against an AWS ENV
+    # But you can set the values on your CI/CD as well
+    [[ -z $HOSTED_ZONE_ID ]] && export HOSTED_ZONE_ID=XXXXXXXXXXXXXX
+    [[ -z $DOMAIN ]] && export DOMAIN=lotusjs.org
+    [[ -z $RECORD_TYPE ]] && export RECORD_TYPE=A
+    [[ -z $AWS_REGION ]] && export AWS_REGION=us-west-2
 
     # Make sure service port is available
     printf "\nChecking if port $ROUTE53_PORT is available\n"
