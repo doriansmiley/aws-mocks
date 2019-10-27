@@ -30,12 +30,14 @@ describe('Testing Handler', function() {
             region: process.env.AWS_REGION
         });
         //test bad result
-        const result = await  route53.testDNSAnswer({
-            HostedZoneId: 'anything',
-            RecordName: process.env.DOMAIN,
-            RecordType: process.env.RECORD_TYPE,
-        }).promise();
-        debug(result);
-        expect(JSON.stringify(result)).to.deep.equal('{"RecordData":[]}');
+        try{
+            const result = await  route53.testDNSAnswer({
+                HostedZoneId: 'anything',
+                RecordName: process.env.DOMAIN,
+                RecordType: process.env.RECORD_TYPE,
+            }).promise();
+        } catch (e) {
+            expect(e.message).to.equal('No hosted zone found with ID: anything');
+        }
     });
 });
