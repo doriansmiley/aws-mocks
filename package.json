@@ -34,8 +34,8 @@
     "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "grunt": "^1.0.4",
-    "grunt-mocha-cli": "^5.0.0",
+    "grunt-mocha-cli": "^7.0.0",
     "grunt-mocha-test": "^0.13.3",
-    "mocha": "^6.2.2"
+    "mocha": "^10.2.0"
   }
 }
